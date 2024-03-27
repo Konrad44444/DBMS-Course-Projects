@@ -13,6 +13,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Item {
+model Dish {
   id Int @id @default(autoincrement())
+
+  name  String
+  price Float
+
+  ingredients IngredientsOnDishes[]
+  orders      DishesOnOrders[]
+}
+
+model Ingredient {
+  id Int @id @default(autoincrement())
+
+  name     String
+  price    Float
+  quantity Int
+
+  dishes   IngredientsOnDishes[]
+  invoices InvoicesOnIngredients[]
+}
+
+model IngredientsOnDishes {
+  id Int @id @default(autoincrement())
+
+  dish         Dish       @relation(fields: [dishId], references: [id])
+  dishId       Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  quantity Int
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  totalAmount Float
+  date        DateTime @default(now())
+
+  customer   Customer         @relation(fields: [customerId], references: [id])
+  customerId Int
+  dishes     DishesOnOrders[]
+}
+
+model DishesOnOrders {
+  id Int @id @default(autoincrement())
+
+  dish    Dish  @relation(fields: [dishId], references: [id])
+  dishId  Int
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+
+  quantity Int
+}
+
+model Customer {
+  id Int @id @default(autoincrement())
+
+  name  String
+  email String
+
+  orders Order[]
+}
+
+model Invoice {
+  id Int @id @default(autoincrement())
+
+  date DateTime
+
+  supplier    Supplier                @relation(fields: [supplierId], references: [id])
+  supplierId  Int
+  ingredients InvoicesOnIngredients[]
+}
+
+model InvoicesOnIngredients {
+  id Int @id @default(autoincrement())
+
+  invoice      Invoice    @relation(fields: [invoiceId], references: [id])
+  invoiceId    Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  quantity Int
+  price    Float
+}
+
+model Supplier {
+  id Int @id @default(autoincrement())
+
+  name  String
+  email String
+
+  invoices Invoice[]
 }
