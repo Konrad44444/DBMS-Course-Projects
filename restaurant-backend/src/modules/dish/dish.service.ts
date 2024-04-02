@@ -45,24 +45,22 @@ export class DishService {
   }
 
   async createDish(data: CreateDishDto) {
-    const dish = await this.prisma.dish.create({
+    return this.prisma.dish.create({
       data: {
         name: data.name,
         price: data.price,
+        ingredients: {
+          create: data.ingredients.map((ingredient) => ({
+            quantity: ingredient.quantity,
+            ingredient: {
+              connect: {
+                id: ingredient.id,
+              },
+            },
+          })),
+        },
       },
     });
-
-    data.ingredients.map((value) => {
-      this.prisma.ingredientsOnDishes.create({
-        data: {
-          quantity: value.quantity,
-          dishId: dish.id,
-          ingredientId: value.id,
-        },
-      });
-    });
-
-    return HttpStatus.CREATED;
   }
 
   async deleteDish(id: number) {
