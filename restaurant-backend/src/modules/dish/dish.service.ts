@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDishDto } from './dto/CreateDish.dto';
 import { UpdateDishDto } from './dto/UpdateDish.dto';
@@ -18,6 +18,7 @@ export class DishService {
                 name: true,
               },
             },
+            quantity: true,
           },
         },
       },
