@@ -7,7 +7,19 @@ export class CustomerService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllCustomers() {
-    return this.prisma.customer.findMany();
+    return this.prisma.customer.findMany({
+      include: {
+        orders: {
+          select: {
+            date: true,
+            totalAmount: true,
+          },
+          orderBy: {
+            date: 'desc',
+          },
+        },
+      },
+    });
   }
 
   async getCustomerById(id: number) {
