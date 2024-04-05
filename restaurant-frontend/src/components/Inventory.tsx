@@ -35,9 +35,6 @@ type DishGet = {
   ingredients?: [{ ingredient: Ingredient; quantity: number }];
 };
 
-const dishes: Dish[] = [];
-const dishesGet: DishGet[] = [];
-
 const onFinishDish: FormProps<Dish>["onFinish"] = (values) => {
   postDish(JSON.stringify(values));
 };
@@ -104,6 +101,20 @@ function Inventory() {
       .catch((error) => console.log(error));
   }, []);
 
+  const [dishesGet, setDishesGet] = useState<DishGet[]>();
+
+  useEffect(() => {
+    fetch("http://localhost:8080/dish", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDishesGet(data);
+        console.log(data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <div style={{ width: "100%", backgroundColor: "white" }}>
       <div
@@ -125,7 +136,7 @@ function Inventory() {
           layout="vertical"
           labelCol={{ span: 16 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
+          initialValues={{ remember: false }}
           onFinish={onFinishDish}
           onFinishFailed={onFinishFailedDish}
           autoComplete="yes"
@@ -229,7 +240,7 @@ function Inventory() {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           style={{ maxWidth: 600 }}
-          initialValues={{ remember: true }}
+          initialValues={{ remember: false }}
           onFinish={onFinishIngredient}
           onFinishFailed={onFinishFailedIngredient}
           autoComplete="off"
@@ -305,7 +316,24 @@ function Inventory() {
           renderItem={(item) => (
             <List.Item>
               <Card title={item.name}>
-                Price: {item.price} zł Ingredients:{" "}
+                Price: {item.price} zł
+                <Card title={"Ingredients"} style={{ marginTop: 10 }}>
+                  <ul
+                    style={{
+                      listStyleType: "none",
+                      marginLeft: 0,
+                      paddingLeft: 5,
+                    }}
+                  >
+                    {item.ingredients?.map((input) => {
+                      return (
+                        <li>
+                          {input.ingredient.name}: {input.quantity} psc
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Card>
               </Card>
             </List.Item>
           )}
