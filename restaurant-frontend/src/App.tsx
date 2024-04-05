@@ -2,7 +2,8 @@ import React from 'react';
 import { Layout, Menu, theme } from 'antd';
 import { Link, Route, Routes } from 'react-router-dom';
 import Inventory from './components/Inventory';
-import { AppstoreOutlined, DesktopOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, DesktopOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import Order from './components/Order';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -29,12 +30,18 @@ const App: React.FC = () => {
             <span>Inventory</span>
             <Link to="/inventory" />
           </Menu.Item>
+          <Menu.Item>
+            <PlusCircleOutlined style={{fontSize: '18px'}} />
+            <span>Order</span>
+            <Link to="/order" />
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
         <Content style={{ margin: "0 16px", background: "white" }}>
           <Routes>
             <Route path="/inventory" element={<Inventory/>} />
+            <Route path="/order" element={<Order/>} />
           </Routes>
         </Content>
         <Footer style={{ textAlign: 'center', bottom: 0, position: 'fixed', width: 'calc(100% - 200px)', background: 'whitesmoke'}}>
