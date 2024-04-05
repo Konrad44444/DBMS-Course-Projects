@@ -28,6 +28,16 @@ type Dish = {
   ingredients?: number[];
 };
 
+type DishGet = {
+  id?: number;
+  name?: string;
+  price?: number;
+  ingredients?: [{ ingredient: Ingredient; quantity: number }];
+};
+
+const dishes: Dish[] = [];
+const dishesGet: DishGet[] = [];
+
 const onFinishDish: FormProps<Dish>["onFinish"] = (values) => {
   postDish(JSON.stringify(values));
 };
@@ -206,13 +216,12 @@ function Inventory() {
       <div
         style={{
           width: "calc(50% - 20px)",
+          height: "100%",
           display: "inline-block",
-          paddingTop: "10px",
-          paddingLeft: "25px",
+          padding: "40px",
           borderRadius: "10px",
           background: "whitesmoke",
           margin: "10px",
-          paddingBottom: "20px",
         }}
       >
         <Form
@@ -226,7 +235,10 @@ function Inventory() {
           autoComplete="off"
           layout="vertical"
         >
-          <Title level={2}>Insert new ingredient</Title>
+          <Typography.Title style={{ margin: "10px" }}>
+            Add a ingredient
+          </Typography.Title>
+
           <Form.Item<Ingredient>
             label={"Name"}
             name={"name"}
@@ -267,7 +279,7 @@ function Inventory() {
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
-              Add
+              Add ingredient
             </Button>
           </Form.Item>
         </Form>
@@ -286,6 +298,23 @@ function Inventory() {
         <Typography.Title style={{ margin: "10px" }}>
           Dish list
         </Typography.Title>
+
+        <List
+          grid={{ gutter: 16, column: 2 }}
+          dataSource={dishesGet}
+          renderItem={(item) => (
+            <List.Item>
+              <Card title={item.name}>
+                Price: {item.price} zł Ingredients:{" "}
+                {item.ingredients.map((index) => {
+                  <p>
+                    {index.ingredient.name} - {index.quantity} pcs
+                  </p>;
+                })}
+              </Card>
+            </List.Item>
+          )}
+        />
       </div>
 
       <div
