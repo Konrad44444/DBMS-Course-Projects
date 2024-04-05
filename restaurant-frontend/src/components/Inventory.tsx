@@ -1,4 +1,3 @@
-import { Button, Form, FormProps, Input, InputNumber, Select } from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -214,14 +213,6 @@ function Inventory() {
           </Form.Item>
         </Form>
       </div>
-
-            <div style={{width: 'calc(50% - 20px)', display: 'inline-block',
-                        padding: '40px', borderRadius: '10px', background: 'whitesmoke',
-                        margin: '10px'}}>
-
-
-
-            </div>
 
             <div style={{width: 'calc(50% - 20px)', display: 'inline-block',
                         padding: '40px', borderRadius: '10px', background: 'whitesmoke',
