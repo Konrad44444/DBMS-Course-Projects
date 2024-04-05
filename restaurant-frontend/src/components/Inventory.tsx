@@ -306,11 +306,6 @@ function Inventory() {
             <List.Item>
               <Card title={item.name}>
                 Price: {item.price} zł Ingredients:{" "}
-                {item.ingredients.map((index) => {
-                  <p>
-                    {index.ingredient.name} - {index.quantity} pcs
-                  </p>;
-                })}
               </Card>
             </List.Item>
           )}
