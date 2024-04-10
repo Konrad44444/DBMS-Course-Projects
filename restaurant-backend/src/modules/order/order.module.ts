@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { CustomerModule } from '../customer/customer.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
+import { CustomerService } from '../customer/customer.service';
 
 @Module({
-  providers: [OrderService],
+  providers: [OrderService, CustomerService],
   controllers: [OrderController],
-  imports: [PrismaModule, CustomerModule],
+  imports: [PrismaModule],
 })
 export class OrderModule {}
