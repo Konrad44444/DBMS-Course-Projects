@@ -35,10 +35,6 @@ type DishGet = {
   ingredients?: [{ ingredient: Ingredient; quantity: number }];
 };
 
-const onFinishDish: FormProps<Dish>["onFinish"] = (values) => {
-  postDish(JSON.stringify(values));
-};
-
 const postDish = async (body: string) => {
   fetch("http://localhost:8080/dish", {
     method: "POST",
@@ -51,20 +47,6 @@ const postDish = async (body: string) => {
     .then((response) => response.json())
     .then((data) => console.log(data))
     .catch((error) => console.error(error));
-};
-
-const onFinishFailedDish: FormProps<Dish>["onFinishFailed"] = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-
-const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (values) => {
-  let body = JSON.stringify({
-    name: values.name,
-    price: values.price,
-    quantity: values.quantity,
-  });
-
-  postIngredient(body);
 };
 
 const postIngredient = async (body: string) => {
@@ -81,14 +63,8 @@ const postIngredient = async (body: string) => {
     .catch((error) => console.error(error));
 };
 
-const onFinishFailedIngredient: FormProps<Ingredient>["onFinishFailed"] = (
-  errorInfo
-) => {
-  console.log("Failed:", errorInfo);
-};
-
 function Inventory() {
-  const [ingredients, setIngredients] = useState<Ingredient[]>();
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/ingredient", {
@@ -101,7 +77,7 @@ function Inventory() {
       .catch((error) => console.log(error));
   }, []);
 
-  const [dishesGet, setDishesGet] = useState<DishGet[]>();
+  const [dishesGet, setDishesGet] = useState<Ingredient[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/dish", {
@@ -115,16 +91,45 @@ function Inventory() {
       .catch((error) => console.log(error));
   }, []);
 
+  const onFinishFailedIngredient: FormProps<Ingredient>["onFinishFailed"] = (
+    errorInfo
+  ) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const onFinishFailedDish: FormProps<Dish>["onFinishFailed"] = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  
+  const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (values: Ingredient) => {
+    setIngredients([...ingredients, values]);
+    let body = JSON.stringify({
+      name: values.name,
+      price: values.price,
+      quantity: values.quantity,
+    });
+  
+    postIngredient(body);
+  };
+
+  const onFinishDish: FormProps<Dish>["onFinish"] = (values) => {
+    setDishesGet([...dishesGet, values]);
+    postDish(JSON.stringify(values));
+  };
+
   return (
-    <div style={{ width: "100%", backgroundColor: "white" }}>
+    <div style={{ height: "auto"
+     }}>
       <div
         style={{
-          width: "calc(50% - 20px)",
           display: "inline-block",
+          width: "calc(50% - 20px)",
           padding: "40px",
+          margin: "10px",
+          height: "auto",
           borderRadius: "10px",
           background: "whitesmoke",
-          margin: "10px",
+          verticalAlign: "top"
         }}
       >
         <Typography.Title style={{ margin: "10px" }}>
@@ -184,7 +189,7 @@ function Inventory() {
                     >
                       <Select style={{ width: "175px" }}>
                         {ingredients != undefined &&
-                          ingredients.map((ingredient) => (
+                          ingredients.map((ingredient: Ingredient) => (
                             <Select.Option value={ingredient.id}>
                               {ingredient.name}
                             </Select.Option>
@@ -226,13 +231,14 @@ function Inventory() {
 
       <div
         style={{
-          width: "calc(50% - 20px)",
-          height: "100%",
           display: "inline-block",
+          width: "calc(50% - 20px)",
           padding: "40px",
+          margin: "10px",
+          height: "100%",
           borderRadius: "10px",
           background: "whitesmoke",
-          margin: "10px",
+          verticalAlign: "top"
         }}
       >
         <Form
@@ -304,6 +310,7 @@ function Inventory() {
           borderRadius: "10px",
           background: "whitesmoke",
           margin: "10px",
+          verticalAlign: "top"
         }}
       >
         <Typography.Title style={{ margin: "10px" }}>
@@ -311,9 +318,9 @@ function Inventory() {
         </Typography.Title>
 
         <List
-          grid={{ gutter: 16, column: 2 }}
+          grid={{ gutter: 16, column: 1 }}
           dataSource={dishesGet}
-          renderItem={(item) => (
+          renderItem={(item: DishGet) => (
             <List.Item>
               <Card title={item.name}>
                 Price: {item.price} zł
@@ -348,16 +355,17 @@ function Inventory() {
           borderRadius: "10px",
           background: "whitesmoke",
           margin: "10px",
+          verticalAlign: "top"
         }}
       >
-        <Typography.Title style={{ margin: "10px" }}>
+        <Typography.Title>
           Ingredient list
         </Typography.Title>
 
-        <List
-          grid={{ gutter: 16, column: 2 }}
+        <List style={{marginTop: "10px"}}
+          grid={{ gutter: 16, column: 1 }}
           dataSource={ingredients}
-          renderItem={(item) => (
+          renderItem={(item: Ingredient) => (
             <List.Item>
               <Card title={item.name}>
                 Price: {item.price} zł Quantity: {item.quantity}
