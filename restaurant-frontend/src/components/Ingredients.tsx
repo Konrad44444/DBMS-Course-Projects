@@ -10,7 +10,8 @@ type Ingredient = {
 };
 
 const updateIngredient = async (body: string, id: string) => {
-  fetch("http://localhost:8080/ingredient/" + id, {
+  console.log(id);
+  fetch(`http://localhost:8080/ingredient/${id}`, {
     method: "PUT",
     headers: {
       accept: "*/*",
@@ -44,8 +45,8 @@ function Ingredients() {
   };
 
   const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (values: Ingredient) => {
+    console.log(values);
     let body = JSON.stringify({
-      id: values.id,
       name: values.name,
       price: values.price,
       quantity: values.quantity,
@@ -56,7 +57,7 @@ function Ingredients() {
   };
 
   return (
-    <div style={{padding: "40px"}}>
+    <div style={{ padding: "40px" }}>
       <Typography.Title>Ingredient list</Typography.Title>
 
       <List
@@ -79,60 +80,60 @@ function Ingredients() {
                 {item.name}
               </Typography.Title>
 
-              <Form.Item<Ingredient>
-                label={"Id"}
-                name={"id"}
-              >
-                <InputNumber placeholder={item.id?.toString()} disabled/>
+              <Form.Item<Ingredient> label={"Id"} name={"id"}>
+                <Input defaultValue={item.id} />
               </Form.Item>
 
               <Form.Item<Ingredient>
                 label={"Name"}
                 name={"name"}
-                rules={[
-                  { required: true, message: "Please insert ingredient name" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please insert ingredient name" },
+                // ]}
               >
-                <Input placeholder={item.name} />
+                <Input defaultValue={item.name} />
               </Form.Item>
 
               <Form.Item<Ingredient>
                 label={"Price"}
                 name={"price"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please insert ingredient price",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please insert ingredient price",
+                //   },
+                // ]}
               >
-                <InputNumber placeholder={item.price?.toString()} />
+                <InputNumber defaultValue={item.price} />
               </Form.Item>
 
               <Form.Item<Ingredient>
                 label={"Quantity"}
                 name={"quantity"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please insert ingredient quantity",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please insert ingredient quantity",
+                //   },
+                // ]}
               >
-                <InputNumber placeholder={item.quantity?.toString()} />
+                <InputNumber defaultValue={item.quantity} />
               </Form.Item>
 
               <Form.Item<Ingredient>
                 label={"Threshold"}
                 name={"threshold"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please insert threshold for ingredient",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please insert threshold for ingredient",
+                //   },
+                // ]}
               >
-                <InputNumber placeholder={item.threshold?.toString()} />
+                <InputNumber
+                  defaultValue={item.threshold}
+                  value={item.threshold}
+                />
               </Form.Item>
 
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

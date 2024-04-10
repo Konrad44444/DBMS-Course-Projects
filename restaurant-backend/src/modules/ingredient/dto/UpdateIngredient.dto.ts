@@ -8,7 +8,7 @@ export class UpdateIngredientDto {
   price: number;
 
   @IsNumber()
-  quantiry: number;
+  quantity: number;
 
   @IsNumber()
   threshold: number;
