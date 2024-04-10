@@ -9,4 +9,7 @@ export class UpdateIngredientDto {
 
   @IsNumber()
   quantiry: number;
+
+  @IsNumber()
+  threshold: number;
 }

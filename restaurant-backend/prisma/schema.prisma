@@ -29,6 +29,7 @@ model Ingredient {
   name     String
   price    Float
   quantity Int
+  threshold Int
 
   dishes   IngredientsOnDishes[]
   invoices InvoicesOnIngredients[]

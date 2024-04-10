@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/CreateOrder.dto';
+import { CustomerService } from '../customer/customer.service';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly customer: CustomerService,
+  ) {}
 
   async getAllOrders() {
     return this.prisma.order.findMany({
@@ -60,13 +64,46 @@ export class OrderService {
   }
 
   async saveOrder(order: CreateOrderDto) {
+    const customerEmail = order.customerEmail;
+
+    const c = await this.customer.getCustomerByEmail(customerEmail);
+
+    if (c === undefined) {
+      const customerSaved = this.customer.saveCustomer({
+        name: order.customerName,
+        email: order.customerEmail,
+      });
+
+      return this.prisma.order.create({
+        data: {
+          totalAmount: order.totalAmount,
+          date: new Date(),
+          customer: {
+            connect: {
+              id: (await customerSaved).id,
+            },
+          },
+          dishes: {
+            create: order.dishes.map((dish) => ({
+              quantity: dish.quantity,
+              dish: {
+                connect: {
+                  id: dish.dishId,
+                },
+              },
+            })),
+          },
+        },
+      });
+    }
+
     return this.prisma.order.create({
       data: {
         totalAmount: order.totalAmount,
         date: new Date(),
         customer: {
           connect: {
-            id: order.customerId,
+            id: c[0].id,
           },
         },
         dishes: {
