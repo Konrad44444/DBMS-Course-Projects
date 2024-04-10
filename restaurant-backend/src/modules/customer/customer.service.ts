@@ -52,4 +52,12 @@ export class CustomerService {
       },
     });
   }
+
+  async getCustomerByEmail(email: string) {
+    return this.prisma.customer.findMany({
+      where: {
+        email: email,
+      },
+    });
+  }
 }

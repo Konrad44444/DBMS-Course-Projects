@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IsNumber, IsString } from 'class-validator';
 
 export class CreateIngredientDto {
@@ -9,4 +10,7 @@ export class CreateIngredientDto {
 
   @IsNumber()
   quantity: number;
+
+  @IsNumber()
+  threshold: number;
 }
