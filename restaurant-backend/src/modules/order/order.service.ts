@@ -57,6 +57,7 @@ export class OrderService {
                 price: true,
               },
             },
+            quantity: true,
           },
         },
       },
@@ -74,7 +75,7 @@ export class OrderService {
         email: order.customerEmail,
       });
 
-      return this.prisma.order.create({
+      const orderCreated = this.prisma.order.create({
         data: {
           totalAmount: order.totalAmount,
           date: new Date(),
@@ -95,9 +96,11 @@ export class OrderService {
           },
         },
       });
+
+      return this.getOrderById((await orderCreated).id);
     }
 
-    return this.prisma.order.create({
+    const orderCreated = this.prisma.order.create({
       data: {
         totalAmount: order.totalAmount,
         date: new Date(),
@@ -118,5 +121,7 @@ export class OrderService {
         },
       },
     });
+
+    return this.getOrderById((await orderCreated).id);
   }
 }
