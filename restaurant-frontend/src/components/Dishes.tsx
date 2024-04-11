@@ -81,9 +81,10 @@ function Dishes() {
 
       {dishes.map((dish, index) => {
         return (
+          <>
           <Form layout="inline" style={{ padding: "10px" }} colon={false} size="large">
             <Form.Item<DishGet>
-              label={<Title level={3}>Name:</Title>}
+              label={<Title level={3}>{dish.id}. Name:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <Input
@@ -125,6 +126,8 @@ function Dishes() {
               Edit
             </Button>
           </Form>
+          <hr style={{opacity: "50%"}} />
+          </>
         );
       })}
     </div>

@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, FormProps, Input, InputNumber, Select, Space, Typography } from "antd";
+import { Button, Form, FormProps, Input, InputNumber, notification, NotificationArgsProps, Select, Space, Typography } from "antd";
 import { useEffect, useState } from "react";
 
 type Ingredient = {
@@ -17,28 +17,21 @@ type DishGet = {
 };
 
 type Order = {
+    amount?: number;
     email?: string;
     name?: string;
     dishes?: [{ dishId: number, quantity: number}]
 }
 
-const postOrder = async (body: string) => {
-    fetch("http://localhost:8080/order", {
-      method: "POST",
-      headers: {
-        accept: "*/*",
-        "Content-Type": "application/json",
-      },
-      body: body,
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  };
+type NotificationPlacement = NotificationArgsProps["placement"];
 
 function Order() {
 
-    const [dishesGet, setDishesGet] = useState<Ingredient[]>([]);
+    const [dishesGet, setDishesGet] = useState<DishGet[]>([]);
+    let amounts: number[] = [];
+    let totalAmount: number = 0;
+    const [orderForm] = Form.useForm();
+    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
       fetch("http://localhost:8080/dish", {
@@ -52,18 +45,72 @@ function Order() {
         .catch((error) => console.log(error));
     }, []);
 
+    const onValuesChange = (changedValues: Order, allValues: Order) => {
+        amounts = [];
+        totalAmount = 0;
+        allValues.dishes?.forEach((element) => {
+            if(element !== undefined && element.quantity !== null) {
+                var amount = dishesGet.find(x => x.id === element.dishId)?.price as number * element.quantity;
+                amounts = [...amounts, amount];
+                totalAmount += amount;
+            }
+        })
+    }
+
     const onFinish: FormProps["onFinish"] = (values: Order) => {
         console.log(values);
         let body = JSON.stringify ({
-            email: values.email,
-            name: values.name,
+            totalAmount: totalAmount,
+            customerEmail: values.email as string,
+            customerName: values.name as string,
             dishes: values.dishes
         })
         postOrder(body);
+        orderForm.resetFields();
     };
       
     const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
         console.log('Failed:', errorInfo);
+      };
+
+    const openNotification = (data: Order, placement: NotificationPlacement) => {
+
+        let message = (
+            <div>
+                <h3>Successfully placed order</h3>
+                <p>Name: {data.name}</p>
+                <p>Email: {data.email}</p>
+                <p>Ordered items:</p>
+                {data.dishes?.map(dish => {
+                    return(
+                        <p>&emsp{dishesGet.find(x => x.id === dish.dishId)?.name} - {dishesGet.find(x => x.id === dish.dishId)?.price} zł - {dish.quantity} pcs</p>
+                    )
+                })}
+                <p>Total amount: {data.amount} zł</p>
+            </div>
+        );
+          
+        api['success']({
+          message: "Success",
+          description:
+            message,
+          placement,
+        });
+      };
+
+    const postOrder = async (body: string) => {
+        console.log(body);
+        fetch("http://localhost:8080/order", {
+          method: "POST",
+          headers: {
+            accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          body: body,
+        })
+          .then((response) => response.json())
+          .then((data) => openNotification(data, "topRight"))
+          .catch((error) => console.error(error));
       };
 
     return(
@@ -71,8 +118,9 @@ function Order() {
         <div style={{width: 'calc(100% - 20px)', height: '100%', display: 'inline-block',
                     padding: '40px', borderRadius: '10px', background: 'whitesmoke',
                     margin: '10px'}}>
-
+        {contextHolder}
             <Form
+                form={orderForm}
                 name="order"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
@@ -81,6 +129,7 @@ function Order() {
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
+                onValuesChange={onValuesChange}
                 autoComplete="off"
             >
 
@@ -107,7 +156,7 @@ function Order() {
                         <Form.Item
                         label="Dish"
                         {...restField}
-                        name={[name, "id"]}
+                        name={[name, "dishId"]}
                         rules={[
                             { required: true, message: "Missing dish" },
                         ]}
@@ -151,8 +200,8 @@ function Order() {
                 </Typography.Paragraph>
 
                 <Form.Item
-                    label="Username"
-                    name="username"
+                    label="Name"
+                    name="name"
                     rules={[{ required: true, message: 'Please input your username!' }]}
                 >
                     <Input />

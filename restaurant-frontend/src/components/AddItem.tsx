@@ -34,7 +34,7 @@ function isIngredient(object: any): object is Ingredient {
   return 'threshold' in object;
 }
 
-function Inventory() {
+function AddItem() {
   const [api, contextHolder] = notification.useNotification();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [dishForm] = Form.useForm();
@@ -332,4 +332,4 @@ function Inventory() {
   );
 }
 
-export default Inventory;
+export default AddItem;

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Layout, Menu, theme } from 'antd';
 import { Link, Route, Routes } from 'react-router-dom';
-import Inventory from './components/Inventory';
 import { AppleOutlined, AppstoreOutlined, CoffeeOutlined, DesktopOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import Order from './components/Order';
 import Ingredients from './components/Ingredients';
 import Dishes from './components/Dishes';
+import AddItem from './components/AddItem';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -29,8 +29,8 @@ const App: React.FC = () => {
           </Menu.Item>
           <Menu.Item>
             <AppstoreOutlined style={{fontSize: '18px'}} />
-            <span>Inventory</span>
-            <Link to="/inventory" />
+            <span>Add item</span>
+            <Link to="/additem" />
           </Menu.Item>
           <Menu.Item>
             <AppleOutlined style={{fontSize: '18px'}} />
@@ -52,7 +52,7 @@ const App: React.FC = () => {
       <Layout style={{ marginLeft: 200 }}>
         <Content style={{ margin: "0 16px", background: "white" }}>
           <Routes>
-            <Route path="/inventory" element={<Inventory/>} />
+            <Route path="/additem" element={<AddItem/>} />
             <Route path="/order" element={<Order/>} />
             <Route path="/ingredients" element={<Ingredients/>} />
             <Route path="/dishes" element={<Dishes/>} />

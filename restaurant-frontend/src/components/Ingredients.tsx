@@ -96,14 +96,15 @@ function Ingredients() {
 
       {ingredients.map((ingredient, index) => {
         return (
+          <>
           <Form
             layout="inline"
-            style={{ padding: "10px" }}
+            style={{ padding: "10px", verticalAlign: "center" }}
             colon={false}
             size="large"
           >
             <Form.Item<Ingredient>
-              label={<Title level={3}>Name:</Title>}
+              label={<Title level={3}>{ingredient.id}. Name:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <Input
@@ -164,6 +165,8 @@ function Ingredients() {
               Edit
             </Button>
           </Form>
+          <hr style={{opacity: "50%"}} />
+          </>
         );
       })}
 
