@@ -54,7 +54,7 @@ export class CustomerService {
   }
 
   async getCustomerByEmail(email: string) {
-    return this.prisma.customer.findMany({
+    return this.prisma.customer.findFirst({
       where: {
         email: email,
       },

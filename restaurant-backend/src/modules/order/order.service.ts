@@ -68,7 +68,7 @@ export class OrderService {
 
     const c = await this.customer.getCustomerByEmail(customerEmail);
 
-    if (c === undefined) {
+    if (c === null) {
       const customerSaved = this.customer.saveCustomer({
         name: order.customerName,
         email: order.customerEmail,
@@ -103,7 +103,7 @@ export class OrderService {
         date: new Date(),
         customer: {
           connect: {
-            id: c[0].id,
+            id: c.id,
           },
         },
         dishes: {
