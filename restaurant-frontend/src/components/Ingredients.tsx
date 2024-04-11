@@ -5,6 +5,7 @@ import {
   InputNumber,
   Typography
 } from "antd";
+import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
 
 type Ingredient = {
@@ -95,17 +96,14 @@ function Ingredients() {
 
       {ingredients.map((ingredient, index) => {
         return (
-          <Form layout="inline" style={{ padding: "10px" }}>
-            <Typography.Title style={{ margin: "10px" }}>
-              {ingredient.name}
-            </Typography.Title>
-
-            <Form.Item<Ingredient> label={"id"} style={{ paddingTop: "22px" }}>
-              <Input value={ingredients[index].id} disabled />
-            </Form.Item>
-
+          <Form
+            layout="inline"
+            style={{ padding: "10px" }}
+            colon={false}
+            size="large"
+          >
             <Form.Item<Ingredient>
-              label={"name"}
+              label={<Title level={3}>Name:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <Input
@@ -117,7 +115,7 @@ function Ingredients() {
             </Form.Item>
 
             <Form.Item<Ingredient>
-              label={"price"}
+              label={<Title level={3}>Price:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <InputNumber
@@ -131,7 +129,7 @@ function Ingredients() {
             </Form.Item>
 
             <Form.Item<Ingredient>
-              label={"quantity"}
+              label={<Title level={3}>Quantity:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <InputNumber
@@ -145,7 +143,7 @@ function Ingredients() {
             </Form.Item>
 
             <Form.Item<Ingredient>
-              label={"threshold"}
+              label={<Title level={3}>Threshold:</Title>}
               style={{ paddingTop: "22px" }}
             >
               <InputNumber

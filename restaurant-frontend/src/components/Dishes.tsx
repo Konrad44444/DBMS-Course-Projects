@@ -1,4 +1,4 @@
-import { Button, Form, FormProps, Input, InputNumber, Typography } from "antd";
+import { Button, Form, Input, InputNumber, Typography } from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
 
@@ -8,13 +8,6 @@ type Ingredient = {
   price?: number;
   quantity?: number;
   threshold?: number;
-};
-
-type Dish = {
-  id?: number;
-  name?: string;
-  price?: number;
-  ingredients?: number[];
 };
 
 type DishGet = {
@@ -88,19 +81,21 @@ function Dishes() {
 
       {dishes.map((dish, index) => {
         return (
-          <Form layout="inline" style={{ padding: "10px" }}>
-            <Typography.Title style={{ margin: "10px" }}>
-              {dish.name}
-            </Typography.Title>
-
-            <Form.Item<DishGet> label={"name"} style={{ paddingTop: "22px" }}>
+          <Form layout="inline" style={{ padding: "10px" }} colon={false} size="large">
+            <Form.Item<DishGet>
+              label={<Title level={3}>Name:</Title>}
+              style={{ paddingTop: "22px" }}
+            >
               <Input
                 value={dishes[index].name}
                 onChange={(e) => handleChangeDishName(e.target.value, index)}
               />
             </Form.Item>
 
-            <Form.Item<DishGet> label={"price"} style={{ paddingTop: "22px" }}>
+            <Form.Item<DishGet>
+              label={<Title level={3}>Price:</Title>}
+              style={{ paddingTop: "22px" }}
+            >
               <InputNumber
                 value={dishes[index].price}
                 onChange={(e) => {
@@ -125,7 +120,7 @@ function Dishes() {
             <Button
               type="primary"
               style={{ marginLeft: "20px", marginTop: "22px" }}
-              onClick={e => handleUpdateDish(e, index)}
+              onClick={(e) => handleUpdateDish(e, index)}
             >
               Edit
             </Button>
