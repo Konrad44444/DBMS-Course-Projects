@@ -1,148 +1,139 @@
-import { Typography, List, Form, InputNumber, Input, Button, FormProps } from "antd";
-import { useState, useEffect } from "react";
+import { Button, Form, FormProps, Input, InputNumber, Typography } from "antd";
+import Title from "antd/es/typography/Title";
+import { useEffect, useState } from "react";
 
 type Ingredient = {
-    id?: number;
-    name?: string;
-    price?: number;
-    quantity?: number;
-    threshold?: number;
+  id?: number;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  threshold?: number;
 };
 
 type Dish = {
-    id?: number;
-    name?: string;
-    price?: number;
-    ingredients?: number[];
-};
-  
-type DishGet = {
-    id?: number;
-    name?: string;
-    price?: number;
-    ingredients?: [{ ingredient: Ingredient; quantity: number }];
+  id?: number;
+  name?: string;
+  price?: number;
+  ingredients?: number[];
 };
 
-const updateDish = async (body: string, id: string) => {
-    fetch("http://localhost:8080/dish/" + id, {
-      method: "PUT",
-      headers: {
-        accept: "*/*",
-        "Content-Type": "application/json",
-      },
-      body: body,
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  };
+type DishGet = {
+  id: number;
+  name: string;
+  price: number;
+  ingredients: [{ ingredient: Ingredient; quantity: number }];
+};
+
+interface UpdateDish {
+  name: string;
+  price: number;
+}
+
+const updateDish = async (body: UpdateDish, id: number) => {
+  fetch(`http://localhost:8080/dish/${id}`, {
+    method: "PUT",
+    headers: {
+      accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error));
+};
 
 function Dishes() {
+  const [dishes, setDishes] = useState<DishGet[]>([]);
 
-    const [dishes, setDishes] = useState<DishGet[]>([]);
-
-    useEffect(() => {
-      fetch("http://localhost:8080/dish", {
-        method: "GET",
+  useEffect(() => {
+    fetch("http://localhost:8080/dish", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDishes(data);
       })
-        .then((response) => response.json())
-        .then((data) => {
-            setDishes(data);
-        })
-        .catch((error) => console.log(error));
-    }, []);
+      .catch((error) => console.log(error));
+  }, []);
 
-    const onFinishFailedDish: FormProps<Dish>["onFinishFailed"] = (errorInfo: any) => {
-        console.log("Failed:", errorInfo);
-      };
+  const handleChangeDishName = (value: string, index: number) => {
+    let data = [...dishes];
+    data[index].name = value;
+    setDishes(data);
+  };
 
-    const onFinishDish: FormProps<Dish>["onFinish"] = (values) => {
-        let body = JSON.stringify({
-            name: values.name,
-            price: values.price
-          });
-        updateDish(body, values.id?.toString() as string);
-      };
+  const handleChangeDishPrice = (value: number, index: number) => {
+    let data = [...dishes];
+    data[index].price = value;
+    setDishes(data);
+  };
 
-    return (
-    <div style={{padding: "40px"}}>
+  const handleUpdateDish = (e: any, index: number) => {
+    e.preventDefault();
+
+    const object: DishGet = dishes[index];
+
+    const body: UpdateDish = {
+      name: object.name,
+      price: object.price,
+    };
+
+    updateDish(body, object.id);
+  };
+
+  return (
+    <div style={{ padding: "40px" }}>
       <Typography.Title>Dish list</Typography.Title>
 
-      <List
-        style={{ marginTop: "10px" }}
-        grid={{ gutter: 16, column: 1 }}
-        dataSource={dishes}
-        renderItem={(item: DishGet) => (
-          <List.Item>
-            <Form
-              name="dish"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              initialValues={{ remember: false }}
-              onFinish={onFinishDish}
-              onFinishFailed={onFinishFailedDish}
-              autoComplete="off"
-              layout="inline"
-            >
-              <Typography.Title style={{ margin: "10px" }}>
-                {item.name}
-              </Typography.Title>
+      {dishes.map((dish, index) => {
+        return (
+          <Form layout="inline" style={{ padding: "10px" }}>
+            <Typography.Title style={{ margin: "10px" }}>
+              {dish.name}
+            </Typography.Title>
 
-              <Form.Item<DishGet>
-                label={"Id"}
-                name={"id"}
-              >
-                <InputNumber placeholder={item.id?.toString()} disabled/>
-              </Form.Item>
-
-              <Form.Item<DishGet>
-                label={"Name"}
-                name={"name"}
-                rules={[
-                  { required: true, message: "Please insert dish name" },
-                ]}
-              >
-                <Input placeholder={item.name} />
-              </Form.Item>
-
-              <Form.Item<DishGet>
-                label={"Price"}
-                name={"price"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please insert dish price",
-                  },
-                ]}
-              >
-                <InputNumber placeholder={item.price?.toString()} />
-              </Form.Item>
-
-              <List
-                style={{ marginTop: "10px" }}
-                grid={{ gutter: 16, column: 1 }}
-                dataSource={item.ingredients as [{ ingredient: Ingredient; quantity: number }]}
-                renderItem={(ingredient) => (
-                    <List.Item>
-
-                        {ingredient.ingredient.name}: {ingredient.quantity} pcs
-
-                    </List.Item>
-                )}
+            <Form.Item<DishGet> label={"name"} style={{ paddingTop: "22px" }}>
+              <Input
+                value={dishes[index].name}
+                onChange={(e) => handleChangeDishName(e.target.value, index)}
               />
+            </Form.Item>
 
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                  Edit
-                </Button>
-              </Form.Item>
-            </Form>
-          </List.Item>
-        )}
-      />
+            <Form.Item<DishGet> label={"price"} style={{ paddingTop: "22px" }}>
+              <InputNumber
+                value={dishes[index].price}
+                onChange={(e) => {
+                  if (typeof e === "number") {
+                    handleChangeDishPrice(e, index);
+                  }
+                }}
+              />
+            </Form.Item>
+
+            <Title level={3}>Ingredients:</Title>
+            <ul style={{ paddingTop: "5px", fontSize: "20px" }}>
+              {dish.ingredients?.map((ingredient, index) => {
+                return (
+                  <li key={index}>
+                    {ingredient.ingredient.name}: {ingredient.quantity}pcs
+                  </li>
+                );
+              })}
+            </ul>
+
+            <Button
+              type="primary"
+              style={{ marginLeft: "20px", marginTop: "22px" }}
+              onClick={e => handleUpdateDish(e, index)}
+            >
+              Edit
+            </Button>
+          </Form>
+        );
+      })}
     </div>
-    )
-
+  );
 }
 
 export default Dishes;

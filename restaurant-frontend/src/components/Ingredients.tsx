@@ -22,7 +22,7 @@ interface UpdateIngredient {
   threshold: number;
 }
 
-const updateIngredient = async (body: UpdateIngredient, id: string) => {
+const updateIngredient = async (body: UpdateIngredient, id: number) => {
   fetch(`http://localhost:8080/ingredient/${id}`, {
     method: "PUT",
     headers: {
@@ -86,7 +86,7 @@ function Ingredients() {
       threshold: object.threshold
     }
 
-    updateIngredient(body, object.id.toString());
+    updateIngredient(body, object.id);
   };
 
   return (
