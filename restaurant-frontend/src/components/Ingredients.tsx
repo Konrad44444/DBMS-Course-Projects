@@ -1,4 +1,12 @@
-import { Typography, List, Card, Button, Form, Input, InputNumber, FormProps } from "antd";
+import {
+  Button,
+  Form,
+  FormProps,
+  Input,
+  InputNumber,
+  List,
+  Typography
+} from "antd";
 import { useEffect, useState } from "react";
 
 type Ingredient = {
@@ -44,7 +52,9 @@ function Ingredients() {
     console.log("Failed:", errorInfo);
   };
 
-  const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (values: Ingredient) => {
+  const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (
+    values: Ingredient
+  ) => {
     console.log(values);
     let body = JSON.stringify({
       name: values.name,
@@ -52,7 +62,7 @@ function Ingredients() {
       quantity: values.quantity,
       threshold: values.threshold,
     });
-  
+
     updateIngredient(body, values.id?.toString() as string);
   };
 
@@ -87,9 +97,9 @@ function Ingredients() {
               <Form.Item<Ingredient>
                 label={"Name"}
                 name={"name"}
-                // rules={[
-                //   { required: true, message: "Please insert ingredient name" },
-                // ]}
+                rules={[
+                  { required: true, message: "Please insert ingredient name" },
+                ]}
               >
                 <Input defaultValue={item.name} />
               </Form.Item>
@@ -97,12 +107,12 @@ function Ingredients() {
               <Form.Item<Ingredient>
                 label={"Price"}
                 name={"price"}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please insert ingredient price",
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert ingredient price",
+                  },
+                ]}
               >
                 <InputNumber defaultValue={item.price} />
               </Form.Item>
@@ -110,12 +120,12 @@ function Ingredients() {
               <Form.Item<Ingredient>
                 label={"Quantity"}
                 name={"quantity"}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please insert ingredient quantity",
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert ingredient quantity",
+                  },
+                ]}
               >
                 <InputNumber defaultValue={item.quantity} />
               </Form.Item>
@@ -123,12 +133,12 @@ function Ingredients() {
               <Form.Item<Ingredient>
                 label={"Threshold"}
                 name={"threshold"}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please insert threshold for ingredient",
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert threshold for ingredient",
+                  },
+                ]}
               >
                 <InputNumber
                   defaultValue={item.threshold}

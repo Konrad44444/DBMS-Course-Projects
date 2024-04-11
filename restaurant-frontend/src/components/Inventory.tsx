@@ -5,6 +5,7 @@ import {
   FormProps,
   Input,
   InputNumber,
+  NotificationArgsProps,
   Select,
   Space,
   Typography,
@@ -12,7 +13,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 
-type Ingredient = {
+interface Ingredient {
   id?: number;
   name?: string;
   price?: number;
@@ -20,29 +21,21 @@ type Ingredient = {
   threshold?: number;
 };
 
-type Dish = {
+interface Dish {
   id?: number;
   name?: string;
   price?: number;
   ingredients?: number[];
 };
 
-const postDish = async (body: string) => {
-  fetch("http://localhost:8080/dish", {
-    method: "POST",
-    headers: {
-      accept: "*/*",
-      "Content-Type": "application/json",
-    },
-    body: body,
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
-};
+type NotificationPlacement = NotificationArgsProps["placement"];
+
+function isIngredient(object: any): object is Ingredient {
+  return 'threshold' in object;
+}
 
 function Inventory() {
-  const [api] = notification.useNotification();
+  const [api, contextHolder] = notification.useNotification();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [dishForm] = Form.useForm();
   const [ingredientForm] = Form.useForm();
@@ -72,7 +65,6 @@ function Inventory() {
   const onFinishIngredient: FormProps<Ingredient>["onFinish"] = (
     values: Ingredient
   ) => {
-    setIngredients([...ingredients, values]);
     let body = JSON.stringify({
       name: values.name,
       price: values.price,
@@ -81,7 +73,6 @@ function Inventory() {
     });
 
     ingredientForm.resetFields();
-    openNotification();
     postIngredient(body);
   };
 
@@ -90,10 +81,19 @@ function Inventory() {
     postDish(JSON.stringify(values));
   };
 
-  const openNotification = () => {
-    api.info({
-      message: `Success`,
-      placement: "topRight",
+  const openNotification = (data: Ingredient | Dish, placement: NotificationPlacement) => {
+    let message = "";
+    if (isIngredient(data)) {
+      message = `Successfully added ingredient ${data.name}`;
+    } else {
+      message = `Successfully added dish ${data.name}`;
+    }
+      
+    api['success']({
+      message: "Success",
+      description:
+        message,
+      placement,
     });
   };
 
@@ -107,12 +107,30 @@ function Inventory() {
       body: body,
     })
       .then((response) => response.json())
-      .then(() => openNotification)
+      .then((data) => {
+        openNotification(data, "topRight"); 
+        setIngredients([...ingredients, data]);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const postDish = async (body: string) => {
+    fetch("http://localhost:8080/dish", {
+      method: "POST",
+      headers: {
+        accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      body: body,
+    })
+      .then((response) => response.json())
+      .then((data) => openNotification(data, "topLeft"))
       .catch((error) => console.error(error));
   };
 
   return (
     <div style={{ height: "auto" }}>
+      {contextHolder}
       <div
         style={{
           display: "inline-block",
