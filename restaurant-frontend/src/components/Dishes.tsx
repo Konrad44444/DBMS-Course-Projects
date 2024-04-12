@@ -1,4 +1,12 @@
-import { Button, Form, Input, InputNumber, Typography } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  notification,
+  NotificationArgsProps,
+  Typography,
+} from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
 
@@ -22,22 +30,11 @@ interface UpdateDish {
   price: number;
 }
 
-const updateDish = async (body: UpdateDish, id: number) => {
-  fetch(`http://localhost:8080/dish/${id}`, {
-    method: "PUT",
-    headers: {
-      accept: "*/*",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
-};
+type NotificationPlacement = NotificationArgsProps["placement"];
 
 function Dishes() {
   const [dishes, setDishes] = useState<DishGet[]>([]);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     fetch("http://localhost:8080/dish", {
@@ -75,58 +72,94 @@ function Dishes() {
     updateDish(body, object.id);
   };
 
+  const openNotification = (data: any, placement: NotificationPlacement) => {
+    let message = (
+      <div>
+        <h3>Successfully updated ingredient</h3>
+        <p>Name: {data.name}</p>
+        <p>Price: {data.price}</p>
+      </div>
+    );
+
+    api["success"]({
+      message: "Success",
+      description: message,
+      placement,
+    });
+  };
+
+  const updateDish = async (body: UpdateDish, id: number) => {
+    fetch(`http://localhost:8080/dish/${id}`, {
+      method: "PUT",
+      headers: {
+        accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => response.json())
+      .then((data) => openNotification(data, "topRight"))
+      .catch((error) => console.error(error));
+  };
+
   return (
     <div style={{ padding: "40px" }}>
+      {contextHolder}
       <Typography.Title>Dish list</Typography.Title>
 
       {dishes.map((dish, index) => {
         return (
           <>
-          <Form layout="inline" style={{ padding: "10px" }} colon={false} size="large">
-            <Form.Item<DishGet>
-              label={<Title level={3}>{dish.id}. Name:</Title>}
-              style={{ paddingTop: "22px" }}
+            <Form
+              layout="inline"
+              style={{ padding: "10px" }}
+              colon={false}
+              size="large"
             >
-              <Input
-                value={dishes[index].name}
-                onChange={(e) => handleChangeDishName(e.target.value, index)}
-              />
-            </Form.Item>
+              <Form.Item<DishGet>
+                label={<Title level={3}>{dish.id}. Name:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <Input
+                  value={dishes[index].name}
+                  onChange={(e) => handleChangeDishName(e.target.value, index)}
+                />
+              </Form.Item>
 
-            <Form.Item<DishGet>
-              label={<Title level={3}>Price:</Title>}
-              style={{ paddingTop: "22px" }}
-            >
-              <InputNumber
-                value={dishes[index].price}
-                onChange={(e) => {
-                  if (typeof e === "number") {
-                    handleChangeDishPrice(e, index);
-                  }
-                }}
-              />
-            </Form.Item>
+              <Form.Item<DishGet>
+                label={<Title level={3}>Price:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <InputNumber
+                  value={dishes[index].price}
+                  onChange={(e) => {
+                    if (typeof e === "number") {
+                      handleChangeDishPrice(e, index);
+                    }
+                  }}
+                />
+              </Form.Item>
 
-            <Title level={3}>Ingredients:</Title>
-            <ul style={{ paddingTop: "5px", fontSize: "20px" }}>
-              {dish.ingredients?.map((ingredient, index) => {
-                return (
-                  <li key={index}>
-                    {ingredient.ingredient.name}: {ingredient.quantity}pcs
-                  </li>
-                );
-              })}
-            </ul>
+              <Title level={3}>Ingredients:</Title>
+              <ul style={{ paddingTop: "5px", fontSize: "20px" }}>
+                {dish.ingredients?.map((ingredient, index) => {
+                  return (
+                    <li key={index}>
+                      {ingredient.ingredient.name}: {ingredient.quantity}pcs
+                    </li>
+                  );
+                })}
+              </ul>
 
-            <Button
-              type="primary"
-              style={{ marginLeft: "20px", marginTop: "22px" }}
-              onClick={(e) => handleUpdateDish(e, index)}
-            >
-              Edit
-            </Button>
-          </Form>
-          <hr style={{opacity: "50%"}} />
+              <Button
+                type="primary"
+                style={{ marginLeft: "20px", marginTop: "22px" }}
+                onClick={(e) => handleUpdateDish(e, index)}
+              >
+                Edit
+              </Button>
+            </Form>
+            <hr style={{ opacity: "50%" }} />
           </>
         );
       })}

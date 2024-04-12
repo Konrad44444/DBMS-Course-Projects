@@ -63,7 +63,6 @@ function Order() {
   const [dishesGet, setDishesGet] = useState<DishGet[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   let amounts: number[] = [];
-  //   let totalAmount: number = 0;
   const [orderForm] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
 
@@ -121,9 +120,9 @@ function Order() {
         <p>Name: {data.customer.name}</p>
         <p>Email: {data.customer.email}</p>
         <p>Ordered items:</p>
-        {data.dishes?.map((dish) => {
+        {data.dishes?.map((dish, i) => {
           return (
-            <p>
+            <p key={i}>
               {dish.dish.name} - {dish.dish.price}zł - {dish.quantity}
             </p>
           );
@@ -210,8 +209,8 @@ function Order() {
                   >
                     <Select style={{ width: "200px" }}>
                       {dishesGet != undefined &&
-                        dishesGet.map((dish: DishGet) => (
-                          <Select.Option value={dish.id}>
+                        dishesGet.map((dish: DishGet, i) => (
+                          <Select.Option value={dish.id} key={i}>
                             {dish.name}
                           </Select.Option>
                         ))}

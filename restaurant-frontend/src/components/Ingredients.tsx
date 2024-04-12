@@ -3,7 +3,9 @@ import {
   Form,
   Input,
   InputNumber,
-  Typography
+  notification,
+  NotificationArgsProps,
+  Typography,
 } from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
@@ -23,22 +25,11 @@ interface UpdateIngredient {
   threshold: number;
 }
 
-const updateIngredient = async (body: UpdateIngredient, id: number) => {
-  fetch(`http://localhost:8080/ingredient/${id}`, {
-    method: "PUT",
-    headers: {
-      accept: "*/*",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
-};
+type NotificationPlacement = NotificationArgsProps["placement"];
 
 function Ingredients() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     fetch("http://localhost:8080/ingredient", {
@@ -77,99 +68,134 @@ function Ingredients() {
 
   const handleEditIngredient = (e: any, index: number) => {
     e.preventDefault();
-    
+
     const object: Ingredient = ingredients[index];
 
     const body: UpdateIngredient = {
       name: object.name,
       price: object.price,
       quantity: object.quantity,
-      threshold: object.threshold
-    }
+      threshold: object.threshold,
+    };
 
     updateIngredient(body, object.id);
   };
 
+  const openNotification = (
+    data: Ingredient,
+    placement: NotificationPlacement
+  ) => {
+    let message = (
+      <div>
+        <h3>Successfully updated ingredient</h3>
+        <p>Name: {data.name}</p>
+        <p>Price: {data.price}</p>
+        <p>Quantity: {data.quantity}</p>
+        <p>Threshold: {data.threshold}</p>
+      </div>
+    );
+
+    api["success"]({
+      message: "Success",
+      description: message,
+      placement,
+    });
+  };
+
+  const updateIngredient = async (body: UpdateIngredient, id: number) => {
+    fetch(`http://localhost:8080/ingredient/${id}`, {
+      method: "PUT",
+      headers: {
+        accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => response.json())
+      .then((data) => openNotification(data, "topRight"))
+      .catch((error) => console.error(error));
+  };
+
   return (
     <div style={{ padding: "40px" }}>
+      {contextHolder}
       <Typography.Title>Ingredient list</Typography.Title>
 
       {ingredients.map((ingredient, index) => {
         return (
           <>
-          <Form
-            layout="inline"
-            style={{ padding: "10px", verticalAlign: "center" }}
-            colon={false}
-            size="large"
-          >
-            <Form.Item<Ingredient>
-              label={<Title level={3}>{ingredient.id}. Name:</Title>}
-              style={{ paddingTop: "22px" }}
+            <Form
+              layout="inline"
+              style={{ padding: "10px", verticalAlign: "center" }}
+              colon={false}
+              size="large"
             >
-              <Input
-                value={ingredients[index].name}
-                onChange={(e) =>
-                  handleChangeIngredientName(e.target.value, index)
-                }
-              />
-            </Form.Item>
-
-            <Form.Item<Ingredient>
-              label={<Title level={3}>Price:</Title>}
-              style={{ paddingTop: "22px" }}
-            >
-              <InputNumber
-                value={ingredients[index].price}
-                onChange={(e) => {
-                  if (typeof e === "number") {
-                    handleChangeIngredientPrice(e, index);
+              <Form.Item<Ingredient>
+                label={<Title level={3}>{ingredient.id}. Name:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <Input
+                  value={ingredients[index].name}
+                  onChange={(e) =>
+                    handleChangeIngredientName(e.target.value, index)
                   }
-                }}
-              />
-            </Form.Item>
+                />
+              </Form.Item>
 
-            <Form.Item<Ingredient>
-              label={<Title level={3}>Quantity:</Title>}
-              style={{ paddingTop: "22px" }}
-            >
-              <InputNumber
-                value={ingredients[index].quantity}
-                onChange={(e) => {
-                  if (typeof e === "number") {
-                    handleChangeIngredientQuantity(e, index);
-                  }
-                }}
-              />
-            </Form.Item>
+              <Form.Item<Ingredient>
+                label={<Title level={3}>Price:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <InputNumber
+                  value={ingredients[index].price}
+                  onChange={(e) => {
+                    if (typeof e === "number") {
+                      handleChangeIngredientPrice(e, index);
+                    }
+                  }}
+                />
+              </Form.Item>
 
-            <Form.Item<Ingredient>
-              label={<Title level={3}>Threshold:</Title>}
-              style={{ paddingTop: "22px" }}
-            >
-              <InputNumber
-                value={ingredients[index].threshold}
-                onChange={(e) => {
-                  if (typeof e === "number") {
-                    handleChangeIngredientThreshold(e, index);
-                  }
-                }}
-              />
-            </Form.Item>
+              <Form.Item<Ingredient>
+                label={<Title level={3}>Quantity:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <InputNumber
+                  value={ingredients[index].quantity}
+                  onChange={(e) => {
+                    if (typeof e === "number") {
+                      handleChangeIngredientQuantity(e, index);
+                    }
+                  }}
+                />
+              </Form.Item>
 
-            <Button
-              type="primary"
-              style={{ marginTop: "22px" }}
-              onClick={(e) => handleEditIngredient(e, index)}
-            >
-              Edit
-            </Button>
-          </Form>
-          <hr style={{opacity: "50%"}} />
+              <Form.Item<Ingredient>
+                label={<Title level={3}>Threshold:</Title>}
+                style={{ paddingTop: "22px" }}
+              >
+                <InputNumber
+                  value={ingredients[index].threshold}
+                  onChange={(e) => {
+                    if (typeof e === "number") {
+                      handleChangeIngredientThreshold(e, index);
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Button
+                type="primary"
+                style={{ marginTop: "22px" }}
+                onClick={(e) => handleEditIngredient(e, index)}
+              >
+                Edit
+              </Button>
+            </Form>
+            <hr style={{ opacity: "50%" }} />
           </>
         );
       })}
-
     </div>
   );
 }
