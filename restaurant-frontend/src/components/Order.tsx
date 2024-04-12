@@ -82,7 +82,6 @@ function Order() {
     setTotalAmount(0);
     allValues.dishes?.forEach((element) => {
       if (element !== undefined && element.quantity !== null) {
-        console.log(element.quantity);
         let amount =
           (dishesGet.find((x) => x.id === element.dishId)?.price as number) *
           element.quantity;
