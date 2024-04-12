@@ -87,7 +87,7 @@ function Order() {
           element.quantity;
         amounts = [...amounts, amount];
         if (Number(amount)) {
-          setTotalAmount(totalAmount + amount);
+          setTotalAmount(amount);
         }
       }
     });
