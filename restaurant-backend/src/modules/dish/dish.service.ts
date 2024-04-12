@@ -40,6 +40,7 @@ export class DishService {
                 name: true,
               },
             },
+            quantity: true,
           },
         },
       },

@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/CreateOrder.dto';
 import { CustomerService } from '../customer/customer.service';
+import { IngredientService } from '../ingredient/ingredient.service';
+import { DishService } from '../dish/dish.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly customer: CustomerService,
+    private readonly ingredient: IngredientService,
+    private readonly dish: DishService,
   ) {}
 
   async getAllOrders() {
@@ -68,6 +72,24 @@ export class OrderService {
     const customerEmail = order.customerEmail;
 
     const c = await this.customer.getCustomerByEmail(customerEmail);
+
+    // modify ingredients quantities
+    order.dishes.forEach(async (d) => {
+      const dishFromDb = await this.dish.getDishById(d.dishId);
+
+      dishFromDb.ingredients.forEach(async (i) => {
+        const ingredientFromDb = await this.ingredient.getIngredientById(
+          i.ingredient.id,
+        );
+
+        await this.ingredient.updateIngredient(i.ingredient.id, {
+          name: ingredientFromDb.name,
+          price: ingredientFromDb.price,
+          quantity: ingredientFromDb.quantity - d.quantity * i.quantity,
+          threshold: ingredientFromDb.threshold,
+        });
+      });
+    });
 
     if (c === null) {
       const customerSaved = this.customer.saveCustomer({
