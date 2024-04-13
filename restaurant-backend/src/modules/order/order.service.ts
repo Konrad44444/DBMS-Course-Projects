@@ -28,6 +28,7 @@ export class OrderService {
           select: {
             dish: {
               select: {
+                id: true,
                 name: true,
                 price: true,
               },

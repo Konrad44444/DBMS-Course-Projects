@@ -4,6 +4,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import {
   AppleOutlined,
   AppstoreOutlined,
+  BarChartOutlined,
   CoffeeOutlined,
   DesktopOutlined,
   PlusCircleOutlined,
@@ -13,6 +14,8 @@ import Ingredients from "./components/Ingredients";
 import Dishes from "./components/Dishes";
 import AddItem from "./components/AddItem";
 import Dashboard from "./components/Dashboard";
+import SubMenu from "antd/es/menu/SubMenu";
+import SalesRaport from "./components/SalesRaport";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -65,6 +68,20 @@ const App: React.FC = () => {
             <span>Order</span>
             <Link to="/order" />
           </Menu.Item>
+          <SubMenu
+            icon=<BarChartOutlined style={{ fontSize: "18px" }}/>
+            title="Raports">
+            <Menu.Item>
+              <BarChartOutlined style={{ fontSize: "18px" }} />
+              <span>Sales raport</span>
+              <Link to="/salesraport" />
+            </Menu.Item>
+            <Menu.Item>
+              <BarChartOutlined style={{ fontSize: "18px" }} />
+              <span>Ingredient sales raport</span>
+              <Link to="/ingredientraport" />
+            </Menu.Item>
+          </SubMenu>
         </Menu>
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
@@ -75,6 +92,8 @@ const App: React.FC = () => {
             <Route path="/order" element={<Order />} />
             <Route path="/ingredients" element={<Ingredients />} />
             <Route path="/dishes" element={<Dishes />} />
+            <Route path="/salesraport" element={<SalesRaport />} />
+            <Route path="/ingredientraport" element={<SalesRaport />} />
           </Routes>
         </Content>
         <Footer
