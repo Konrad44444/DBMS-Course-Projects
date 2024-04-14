@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Layout, Menu, theme } from "antd";
 import { Link, Route, Routes } from "react-router-dom";
 import {
@@ -7,6 +7,7 @@ import {
   BarChartOutlined,
   CoffeeOutlined,
   DesktopOutlined,
+  LoginOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import Order from "./components/Order";
@@ -16,6 +17,8 @@ import AddItem from "./components/AddItem";
 import Dashboard from "./components/Dashboard";
 import SubMenu from "antd/es/menu/SubMenu";
 import SalesRaport from "./components/SalesRaport";
+import IngredientRaport from "./components/IngredientRaport";
+import Login from "./components/Login";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -23,6 +26,12 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  const handleCallback = (data: any) => {
+    setIsAuthenticated(data);
+  };
 
   return (
     <Layout hasSider>
@@ -43,6 +52,7 @@ const App: React.FC = () => {
           style={{ fontSize: "18px", fontWeight: "bold" }}
         >
           <p style={{ padding: "20px", textAlign: "center" }}>RESTAURANT</p>
+          {isAuthenticated ? <>
           <Menu.Item key="1">
             <DesktopOutlined style={{ fontSize: "18px" }} />
             <span>Dashboard</span>
@@ -63,11 +73,6 @@ const App: React.FC = () => {
             <span>Dishes</span>
             <Link to="/dishes" />
           </Menu.Item>
-          <Menu.Item>
-            <PlusCircleOutlined style={{ fontSize: "18px" }} />
-            <span>Order</span>
-            <Link to="/order" />
-          </Menu.Item>
           <SubMenu
             icon=<BarChartOutlined style={{ fontSize: "18px" }}/>
             title="Raports">
@@ -81,19 +86,33 @@ const App: React.FC = () => {
               <span>Ingredient sales raport</span>
               <Link to="/ingredientraport" />
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> </>
+          : <></> }
+          <Menu.Item>
+            <PlusCircleOutlined style={{ fontSize: "18px" }} />
+            <span>Order</span>
+            <Link to="/order" />
+          </Menu.Item>
+          <Menu.Item>
+            <LoginOutlined style={{ fontSize: "18px" }} />
+            <span>Login</span>
+            <Link to="/login" />
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
-        <Content style={{ margin: "0 16px", background: "white" }}>
+        <Content style={{ margin: "0 16px", background: "white", marginBottom: "20px" }}>
           <Routes>
+            {isAuthenticated ? <>
             <Route path="/" element={<Dashboard />} />
             <Route path="/additem" element={<AddItem />} />
-            <Route path="/order" element={<Order />} />
             <Route path="/ingredients" element={<Ingredients />} />
             <Route path="/dishes" element={<Dishes />} />
             <Route path="/salesraport" element={<SalesRaport />} />
-            <Route path="/ingredientraport" element={<SalesRaport />} />
+            <Route path="/ingredientraport" element={<IngredientRaport />} />
+            </> : <></> }
+            <Route path="/order" element={<Order />} />
+            <Route path="/login" element={<Login parentCallback={handleCallback} />} />
           </Routes>
         </Content>
         <Footer
