@@ -11,6 +11,7 @@ import {
 import { DishService } from './dish.service';
 import { CreateDishDto } from './dto/CreateDish.dto';
 import { UpdateDishDto } from './dto/UpdateDish.dto';
+import { UpdateIngredientQuantityInDishDto } from './dto/UpdateIngredientQuantityInDish.dto';
 
 @Controller('dish')
 export class DishController {
@@ -42,5 +43,26 @@ export class DishController {
   @Delete(':id')
   async deleteDish(@Param('id', ParseIntPipe) id: number) {
     return this.dishService.deleteDish(id);
+  }
+
+  @Put(':dishId/ingredient/:ingredientId')
+  async changeIngredientQuantityInDish(
+    @Param('dishId', ParseIntPipe) dishId: number,
+    @Param('ingredientId', ParseIntPipe) ingredientId: number,
+    @Body() body: UpdateIngredientQuantityInDishDto,
+  ) {
+    return this.dishService.changeIngredientQuantityInDish(
+      dishId,
+      ingredientId,
+      body.quantity,
+    );
+  }
+
+  @Delete(':dishId/ingredient/:ingredientId')
+  async deleteIngredientFromDish(
+    @Param('dishId', ParseIntPipe) dishId: number,
+    @Param('ingredientId', ParseIntPipe) ingredientId: number,
+  ) {
+    return this.dishService.deleteIngredientFormDish(dishId, ingredientId);
   }
 }

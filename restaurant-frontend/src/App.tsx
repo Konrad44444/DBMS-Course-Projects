@@ -69,8 +69,9 @@ const App: React.FC = () => {
             <Link to="/order" />
           </Menu.Item>
           <SubMenu
-            icon=<BarChartOutlined style={{ fontSize: "18px" }}/>
-            title="Raports">
+            icon=<BarChartOutlined style={{ fontSize: "18px" }} />
+            title="Raports"
+          >
             <Menu.Item>
               <BarChartOutlined style={{ fontSize: "18px" }} />
               <span>Sales raport</span>

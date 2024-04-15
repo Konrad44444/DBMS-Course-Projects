@@ -26,9 +26,9 @@ model Dish {
 model Ingredient {
   id Int @id @default(autoincrement())
 
-  name     String
-  price    Float
-  quantity Int
+  name      String
+  price     Float
+  quantity  Int
   threshold Int
 
   dishes   IngredientsOnDishes[]
@@ -36,14 +36,14 @@ model Ingredient {
 }
 
 model IngredientsOnDishes {
-  id Int @id @default(autoincrement())
-
   dish         Dish       @relation(fields: [dishId], references: [id])
   dishId       Int
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
 
   quantity Int
+
+  @@id([dishId, ingredientId])
 }
 
 model Order {

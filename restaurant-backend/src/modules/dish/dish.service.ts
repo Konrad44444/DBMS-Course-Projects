@@ -82,4 +82,33 @@ export class DishService {
       data: data,
     });
   }
+
+  async changeIngredientQuantityInDish(
+    dishId: number,
+    ingredientId: number,
+    newQuantity: number,
+  ) {
+    return this.prisma.ingredientsOnDishes.update({
+      where: {
+        dishId_ingredientId: {
+          dishId: dishId,
+          ingredientId: ingredientId,
+        },
+      },
+      data: {
+        quantity: newQuantity,
+      },
+    });
+  }
+
+  async deleteIngredientFormDish(dishId: number, ingredientId: number) {
+    return this.prisma.ingredientsOnDishes.delete({
+      where: {
+        dishId_ingredientId: {
+          dishId: dishId,
+          ingredientId: ingredientId,
+        },
+      },
+    });
+  }
 }
