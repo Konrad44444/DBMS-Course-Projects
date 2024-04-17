@@ -1,5 +1,4 @@
-import { AreaChartOutlined, LineChartOutlined } from "@ant-design/icons";
-import { DatePicker, MenuProps, Table, TableProps, Tabs, TabsProps, Typography } from "antd";
+import { DatePicker, Table, TableProps, Typography } from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
 
