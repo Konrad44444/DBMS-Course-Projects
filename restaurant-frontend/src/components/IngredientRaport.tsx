@@ -70,6 +70,7 @@ function IngredientRaport() {
     const [allDishes, setAllDishes] = useState<Dish[]>([])
     const [allOrders, setAllOrders] = useState<Order[]>([]);
     const [ingredientRaport, setIngredientRaport] = useState<IngredientRaport[]>([]);
+    const [totalAmount, setTotalAmount] = useState<number>(0);
 
     useEffect(() => {
     fetch("http://localhost:8080/order", {
@@ -139,6 +140,14 @@ function IngredientRaport() {
 
         }
 
+        if(ingredients.length === 0) {
+          setTotalAmount(0);
+        }
+        else {
+          setTotalAmount(ingredients.reduce((accumulator: number, currentValue: IngredientRaport) => {
+            return accumulator + currentValue.amount;
+          }, 0));
+        }
         setIngredientRaport(ingredients);
 
     }
@@ -152,6 +161,8 @@ function IngredientRaport() {
           <DatePicker onChange={onDateChange} picker="month"/>
         </div>
         <Table columns={ingredientColumns} dataSource={ingredientRaport} />
+
+        <Typography.Title level={5}>Total amount in time period: {totalAmount} PLN</Typography.Title>
 
       </div>
     )

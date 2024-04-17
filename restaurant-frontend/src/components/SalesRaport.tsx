@@ -62,6 +62,7 @@ function SalesRaport() {
 
     const [orders, setOrders] = useState<Order[]>([]);
     const [allOrders, setAllOrders] = useState<Order[]>([]);
+    const [totalAmount, setTotalAmount] = useState<number>(0);
 
     useEffect(() => {
     fetch("http://localhost:8080/order", {
@@ -75,6 +76,9 @@ function SalesRaport() {
         });
         setAllOrders(d);
         setOrders(d);
+        setTotalAmount(d.reduce((accumulator: number, currentValue: Order) => {
+          return accumulator + currentValue.totalAmount;
+        }, 0));
       })
       .catch((error) => console.log(error));
     }, []);
@@ -83,10 +87,16 @@ function SalesRaport() {
 
       if(dateStrings[0] === "") {
         setOrders(allOrders);
+        setTotalAmount(allOrders.reduce((accumulator: number, currentValue: Order) => {
+          return accumulator + currentValue.totalAmount;
+        }, 0))
       }
       else {
         let ordersRange = allOrders.filter((element) => element.date.substring(0, 10) >= dateStrings[0] && element.date.substring(0, 10) <= dateStrings[1]);
         setOrders(ordersRange);
+        setTotalAmount(ordersRange.reduce((accumulator: number, currentValue: Order) => {
+          return accumulator + currentValue.totalAmount;
+        }, 0))
       }
 
     }
@@ -117,6 +127,8 @@ function SalesRaport() {
             })}
           </table>,
         }}/>
+
+        <Typography.Title level={5}>Total amount in time period: {totalAmount} PLN</Typography.Title>
 
       </div>
     )
